@@ -1,9 +1,3 @@
-./mongod --dbpath ~/data/db --replSet "rs0" --port 27017
-
-# Andrew Erlichson
-# 10gen
-# script to start a sharded environment on localhost
-# clean everything up
 echo "killing mongod and mongos"
 pkill mongod
 
