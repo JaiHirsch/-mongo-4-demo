@@ -13,18 +13,16 @@ import java.util.concurrent.Future;
 
 import static com.mongodb.client.model.Filters.eq;
 
-
 public class MultiThreadTransactionRunner {
-
 
     public static void main(String[] args) throws IOException {
         try (DemoMongoConnector dmc = new DemoMongoConnector()) {
+
             setUpMongoForTransactionTest(dmc);
 
             launchThreadsAndRunTransactions(dmc);
 
             Document skuAbc123 = (Document) dmc.getInventory().find(eq("sku", "abc123")).first();
-
 
             System.out.println("++++++++++ " + skuAbc123);
             Assertions.isTrue("qty should have been 500", 500 == skuAbc123.getInteger("qty"));
@@ -41,23 +39,21 @@ public class MultiThreadTransactionRunner {
     }
 
     private static void launchThreadsAndRunTransactions(DemoMongoConnector dmc) {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        List<Future> futures = new ArrayList<>();
 
-        submitTransactionThreads(dmc, executorService, futures);
-
-        executorService.shutdown();
-
-        futures.forEach(future -> {
+        submitTransactionThreads(dmc).forEach(future -> {
             try {
                 future.get();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+
     }
 
-    private static void submitTransactionThreads(DemoMongoConnector dmc, ExecutorService executorService, List<Future> futures) {
+    private static List<Future> submitTransactionThreads(DemoMongoConnector dmc) {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        List<Future> futures = new ArrayList<>();
+
         for (int i = 0; i < 4; i++) {
             futures.add(executorService.submit(new TransactionRetryModule().retryTransaction(100, 5)));
         }
@@ -65,7 +61,10 @@ public class MultiThreadTransactionRunner {
         for (int i = 0; i < 4; i++) {
             futures.add(executorService.submit(new TransactionRetryModule().retryTransaction(-100, 5)));
         }
-    }
 
+        executorService.shutdown();
+
+        return futures;
+    }
 
 }
