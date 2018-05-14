@@ -1,0 +1,16 @@
+
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.mongodb:mongodb-driver:3.8.0-beta1'
+    compile 'org.slf4j:slf4j-api:1.7.24'
+
+    compile 'org.apache.commons:commons-lang3:3.7'
+
+    testCompile 'junit:junit:4.12'
+}
+
