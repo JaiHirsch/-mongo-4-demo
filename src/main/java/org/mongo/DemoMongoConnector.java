@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class DemoMongoConnector implements Closeable{
+public class DemoMongoConnector implements Closeable {
     private static final ServerAddress r0 = new ServerAddress("localhost", 27017);
     private static final ServerAddress r1 = new ServerAddress("localhost", 27018);
     private static final ServerAddress r2 = new ServerAddress("localhost", 27019);
@@ -23,14 +23,13 @@ public class DemoMongoConnector implements Closeable{
     private final MongoCollection<Document> shipment;
 
 
-
     public DemoMongoConnector() {
-        mc =  new MongoClient(reps);
+        mc = new MongoClient(reps);
         inventory = mc.getDatabase("test").getCollection("inventory");
         shipment = mc.getDatabase("test").getCollection("shipment");
     }
 
-    public  MongoClient getMongoClient() {
+    public MongoClient getMongoClient() {
         return mc;
     }
 
