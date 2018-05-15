@@ -71,11 +71,11 @@ public class MultiThreadTransactionRunner {
         List<Future> futures = new ArrayList<>();
 
         for (int i = 0; i < 4; i++) {
-            futures.add(executorService.submit(new TransactionRetryModule().retryTransaction(100, 5)));
+            futures.add(executorService.submit(new TransactionRetryModule().iterateTransactions(100, 5)));
         }
 
         for (int i = 0; i < 4; i++) {
-            futures.add(executorService.submit(new TransactionRetryModule().retryTransaction(-100, 5)));
+            futures.add(executorService.submit(new TransactionRetryModule().iterateTransactions(-100, 5)));
         }
 
         executorService.shutdown();
