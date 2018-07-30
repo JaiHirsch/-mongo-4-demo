@@ -58,7 +58,6 @@ public class TransactionRetryModule {
         try (ClientSession clientSession = dmc.getMongoClient().startSession()) {
 
             transactionRetryLoop(amount, dmc, threadName, clientSession);
-            clientSession.close();
 
         } catch (Exception e) {
 
@@ -67,8 +66,8 @@ public class TransactionRetryModule {
     }
 
     private void transactionRetryLoop(int amount, DemoMongoConnector dmc, String threadName, ClientSession clientSession) {
-        Retry retryLoop = new Retry().withAttempts(MAX_RETRIES).withDelay(DELAY_BETWEEN_RETRIES_MILLIS);
 
+        Retry retryLoop = new Retry().withAttempts(MAX_RETRIES).withDelay(DELAY_BETWEEN_RETRIES_MILLIS);
 
         while (retryLoop.shouldContinue()) try {
             System.out.println(threadName + " : " + retryLoop.getTimesAttempted());
@@ -89,6 +88,7 @@ public class TransactionRetryModule {
     }
 
     private void doTransaction(int amount, DemoMongoConnector dmc, String threadName, ClientSession clientSession) {
+
         clientSession.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
 
         dmc.getInventory().updateOne(clientSession, Filters.eq("sku", "abc123"), Updates.inc("qty", amount));

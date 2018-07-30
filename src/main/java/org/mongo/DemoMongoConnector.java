@@ -19,6 +19,7 @@ package org.mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import java.io.Closeable;
@@ -35,27 +36,31 @@ public class DemoMongoConnector implements Closeable {
     private static final List<ServerAddress> reps = new ArrayList<>(Arrays.asList(new ServerAddress[]{r0, r1, r2}));
 
     private final MongoClient mc;
+    private final MongoDatabase db;
     private final MongoCollection<Document> inventory;
     private final MongoCollection<Document> shipment;
 
 
     public DemoMongoConnector() {
-        mc = new MongoClient(reps);
-        inventory = mc.getDatabase("test").getCollection("inventory");
-        shipment = mc.getDatabase("test").getCollection("shipment");
+        this.mc = new MongoClient(reps);
+        this.db = mc.getDatabase("test");
+        this.inventory = db.getCollection("inventory");
+        this.shipment = db.getCollection("shipment");
     }
 
     public MongoClient getMongoClient() {
-        return mc;
+        return this.mc;
     }
+
+    public MongoDatabase getDatabase() { return this.db; }
 
 
     public MongoCollection getInventory() {
-        return inventory;
+        return this.inventory;
     }
 
     public MongoCollection getShipment() {
-        return shipment;
+        return this.shipment;
     }
 
     @Override

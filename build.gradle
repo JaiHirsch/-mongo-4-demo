@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.mongodb:mongodb-driver:3.8.0-beta1'
+    compile 'org.mongodb:mongodb-driver:3.8.0'
     compile 'org.slf4j:slf4j-api:1.7.24'
 
     compile 'org.apache.commons:commons-lang3:3.7'

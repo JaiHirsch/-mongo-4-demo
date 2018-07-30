@@ -10,10 +10,10 @@ public class Retry {
     private boolean complete = false;
     private long delay = 0L;
 
-    private List <Throwable> exceptions;
+    private List<Throwable> exceptions;
 
     public Retry() {
-        exceptions = new ArrayList <Throwable>();
+        exceptions = new ArrayList<Throwable>();
     }
 
     public Retry withAttempts(int numAttempts) {
@@ -25,8 +25,7 @@ public class Retry {
         if (!complete && timesAttempted != 0)
             try {
                 Thread.sleep(delay);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 /* nada. This makes it so your methods
                  * that use this class don't have to
                  * Throw an InterruptedException */
@@ -40,7 +39,6 @@ public class Retry {
     }
 
 
-
     public void markAsComplete() {
         complete = true;
     }
@@ -49,7 +47,7 @@ public class Retry {
         exceptions.add(e);
     }
 
-    public List <Throwable> getExceptions() {
+    public List<Throwable> getExceptions() {
         return exceptions;
     }
 
