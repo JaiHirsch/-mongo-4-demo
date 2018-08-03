@@ -27,8 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ChangeStreamWatcher implements Runnable {
 
     private final MongoDatabase database;
-    private AtomicBoolean running = new AtomicBoolean(true);
-
 
     public ChangeStreamWatcher(MongoDatabase database) {
         this.database = database;
@@ -39,11 +37,11 @@ public class ChangeStreamWatcher implements Runnable {
         MongoCursor<ChangeStreamDocument<Document>> cursor = database.watch().iterator();
 
         try {
-            while (cursor.hasNext() && running.get()) {
+            while (cursor.hasNext()) {
                 System.out.println(cursor.next());
-
             }
         } catch (IllegalStateException e) {
+            throw new RuntimeException(e);
         }
     }
 

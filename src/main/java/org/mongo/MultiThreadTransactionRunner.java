@@ -33,10 +33,12 @@ import static com.mongodb.client.model.Filters.eq;
 public class MultiThreadTransactionRunner {
 
 
-    private static final ExecutorService changeStreamExecutorService = Executors.newFixedThreadPool(2);
-
+    private static final ExecutorService changeStreamExecutorService = Executors.newFixedThreadPool(1);
+    private static final ExecutorService trnsactionExecutorService = Executors.newFixedThreadPool(10);
     public static void main(String[] args) throws IOException {
         try (DemoMongoConnector dmc = new DemoMongoConnector()) {
+
+            changeStreamExecutorService.submit(new ChangeStreamWatcher(dmc.getDatabase()));
 
             setUpMongoForTransactionTest(dmc);
 
@@ -46,6 +48,7 @@ public class MultiThreadTransactionRunner {
 
             System.out.println("++++++++++ " + skuAbc123);
             Assertions.isTrue("qty should have been 500", 500 == skuAbc123.getInteger("qty"));
+            trnsactionExecutorService.shutdown();
         }
         changeStreamExecutorService.shutdown();
 
@@ -57,7 +60,7 @@ public class MultiThreadTransactionRunner {
         db.drop();
         db.createCollection("inventory");
         db.createCollection("shipment");
-        changeStreamExecutorService.submit(new ChangeStreamWatcher(dmc.getDatabase()));
+
         dmc.getInventory().insertOne(new Document("sku", "abc123").append("qty", 500));
 
 
@@ -76,19 +79,15 @@ public class MultiThreadTransactionRunner {
     }
 
     private static List<Future> submitTransactionThreads(DemoMongoConnector dmc) {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
         List<Future> futures = new ArrayList<>();
 
-
         for (int i = 0; i < 4; i++) {
-            futures.add(executorService.submit(new TransactionRetryModule().iterateTransactions(100, 5)));
+            futures.add(trnsactionExecutorService.submit(new TransactionRetryModule().iterateTransactions(100, 5)));
         }
 
         for (int i = 0; i < 4; i++) {
-            futures.add(executorService.submit(new TransactionRetryModule().iterateTransactions(-100, 5)));
+            futures.add(trnsactionExecutorService.submit(new TransactionRetryModule().iterateTransactions(-100, 5)));
         }
-
-        executorService.shutdown();
 
         return futures;
     }
