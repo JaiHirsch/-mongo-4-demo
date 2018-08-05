@@ -66,7 +66,7 @@ public class TransactionRetryModule {
         Retry retryLoop = new Retry().withAttempts(MAX_RETRIES).withDelay(DELAY_BETWEEN_RETRIES_MILLIS);
 
         while (retryLoop.shouldContinue()) try {
-            System.out.println(threadName + " : " + retryLoop.getTimesAttempted());
+            System.out.println(threadName + "Transaction attempt : " + retryLoop.getTimesAttempted());
 
             doTransaction(amount, dmc, threadName, clientSession);
 

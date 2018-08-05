@@ -37,10 +37,8 @@ public class MultiThreadTransactionRunner {
     private static final ExecutorService trnsactionExecutorService = Executors.newFixedThreadPool(10);
     public static void main(String[] args) throws IOException {
         try (DemoMongoConnector dmc = new DemoMongoConnector()) {
-
-            changeStreamExecutorService.submit(new ChangeStreamWatcher(dmc.getDatabase()));
-
             setUpMongoForTransactionTest(dmc);
+            changeStreamExecutorService.submit(new ChangeStreamWatcher(dmc.getDatabase()));
 
             launchThreadsAndRunTransactions(dmc);
 
