@@ -1,12 +1,5 @@
 package org.mongo;
 
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.changestream.ChangeStreamDocument;
-import org.bson.Document;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * This file is part of mongo-4-demo.
  * mongo-4-demo is free software: you can redistribute it and/or modify
@@ -23,6 +16,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @Author Jai Hirsch
  * @github https://github.com/JaiHirsch/mongo-4-demo
  */
+
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.changestream.ChangeStreamDocument;
+import org.bson.Document;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChangeStreamWatcher implements Runnable {
 

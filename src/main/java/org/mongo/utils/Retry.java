@@ -1,5 +1,15 @@
 package org.mongo.utils;
 
+/**
+ * The following retry code is of unknown origin, but it works well.  It is my understanding
+ * that it is based on logic from the Netflix Hystrix project but I have been unable to find
+ * it.
+ *
+ * @Author unknown
+ *
+ */
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +23,7 @@ public class Retry {
     private List<Throwable> exceptions;
 
     public Retry() {
-        exceptions = new ArrayList<Throwable>();
+        exceptions = new ArrayList<>();
     }
 
     public Retry withAttempts(int numAttempts) {

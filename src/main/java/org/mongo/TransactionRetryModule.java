@@ -26,15 +26,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.Document;
 import org.mongo.utils.Retry;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class TransactionRetryModule {
 
 
     private static final int MAX_RETRIES = 10;
     private static final long DELAY_BETWEEN_RETRIES_MILLIS = 30L;
-    private static final List<Integer> transactionErrorCodes = Arrays.asList(112, 244, 251);
 
 
     public Runnable iterateTransactions(final int amount, final int iterations) {
