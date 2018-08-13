@@ -17,6 +17,8 @@ package org.mongo;
  * @github https://github.com/JaiHirsch/mongo-4-demo
  */
 
+import com.mongodb.Mongo;
+import com.mongodb.MongoException;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
@@ -66,17 +68,19 @@ public class TransactionRetryModule {
         Retry retryLoop = new Retry().withAttempts(MAX_RETRIES).withDelay(DELAY_BETWEEN_RETRIES_MILLIS);
 
         while (retryLoop.shouldContinue()) try {
-            System.out.println(threadName + "Transaction attempt : " + retryLoop.getTimesAttempted());
+            System.out.println(threadName + " Transaction attempt : " + retryLoop.getTimesAttempted());
 
             doTransaction(amount, dmc, threadName, clientSession);
 
             retryLoop.markAsComplete();
             System.out.println(threadName + " complete : " + retryLoop.completedOk());
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             retryLoop.takeException(e);
-            System.out.println(threadName + " Aborting transaction: " + e.getMessage());
-            clientSession.abortTransaction();
+            if (e instanceof MongoException && ((MongoException)e).hasErrorLabel(MongoException.TRANSIENT_TRANSACTION_ERROR_LABEL)) {
+                System.out.println(threadName + " Aborting transaction: " + e.getMessage());
+                clientSession.abortTransaction();
+            } else throw e;
         }
         if (!retryLoop.completedOk()) {
             throw new RuntimeException("Transaction failed after " + MAX_RETRIES + " retries.", retryLoop.getLastException()); //retryLoop.getExceptions().get(retryLoop.getExceptions().size() - 1));
